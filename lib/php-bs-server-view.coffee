@@ -3,6 +3,8 @@
 
 module.exports =
   class PhpServerView extends MessagePanelView
+    @server : null
+
     addMessage: (lines, logLevel) ->
       for text in lines.split "\n"
         linematch = /in ([a-z\\\/\.\-_]+) on line ([0-9]+)$/i
@@ -28,3 +30,14 @@ module.exports =
 
     hide: ->
       @toggle() if @body.isVisible()
+
+    setServer: (server) ->
+      @server = server
+
+    close: ->
+        console.log 'Stopping server'
+        @server.bsserver.stop()
+        @server.server.stop()
+        @server.stop
+        console.log 'Server stopped'
+        super

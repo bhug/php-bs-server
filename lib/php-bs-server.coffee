@@ -1,5 +1,6 @@
-PhpServerView = require './php-server-view'
-PhpServerServer = require './php-server-server'
+PhpServerView = require './php-bs-server-view'
+PhpServerServer = require './php-bs-server-server'
+PhpServerBS = require './php-bs-server-browser-sync'
 open = require 'open'
 fs = require 'fs'
 
@@ -36,7 +37,7 @@ module.exports =
       enum: ['all', 'none']
       default: 'all'
     openInBrowser:
-      title: 'Open in browser'
+      title: 'Open in browser (deprecated)'
       description: 'Open browser at local URL on server start'
       type: 'boolean'
       default: true
@@ -47,13 +48,9 @@ module.exports =
 
 
   activate: ->
-    atom.commands.add 'atom-workspace', "php-server:start", => @start()
-    atom.commands.add 'atom-workspace', "php-server:start-tree", => @startTree()
-    atom.commands.add 'atom-workspace', "php-server:start-tree-route", => @startTreeRoute()
-    atom.commands.add 'atom-workspace', "php-server:start-document", => @startDocument()
-    atom.commands.add 'atom-workspace', "php-server:clear", => @clear()
-    atom.commands.add 'atom-workspace', "php-server:stop", => @stop()
-
+    atom.commands.add 'atom-workspace', "php-bs-server:start", => @start()
+    atom.commands.add 'atom-workspace', "php-bs-server:start-tree", => @startTree()
+    atom.commands.add 'atom-workspace', "php-bs-server:start-public", => @start(atom.project.getPaths()[0]+'/public/')
 
   deactivate: ->
     @stop()
@@ -80,7 +77,6 @@ module.exports =
 
     return [path, basename]
 
-
   start: (documentroot, router) ->
     # Stop server if currently running
     if @server
@@ -92,11 +88,12 @@ module.exports =
       @view = new PhpServerView(
         title: "PHP Server: Launching..."
       )
+      @view.setServer(this)
 
     @view.attach()
 
     # Collapse view if expandOnLog is set to none
-    if atom.config.get('php-server.expandOnLog') == 'none'
+    if atom.config.get('php-bs-server.expandOnLog') == 'none'
       @view?.hide()
 
     # Launch server in given working directory
@@ -113,15 +110,15 @@ module.exports =
     @server = new PhpServerServer documentroot, router
 
     # Pass package settings
-    @server.path = atom.config.get('php-server.phpPath')
-    @server.host = atom.config.get('php-server.localhost')
-    @server.basePort = atom.config.get('php-server.startPort')
-    @server.ini = atom.config.get('php-server.phpIni')
-    @server.overrideErrorlog = atom.config.get('php-server.overrideErrorlog')
+    @server.path = atom.config.get('php-bs-server.phpPath')
+    @server.host = atom.config.get('php-bs-server.localhost')
+    @server.basePort = atom.config.get('php-bs-server.startPort')
+    @server.ini = atom.config.get('php-bs-server.phpIni')
+    @server.overrideErrorlog = atom.config.get('php-bs-server.overrideErrorlog')
 
     # Listen
     @server.on 'message', (message) =>
-      @view?.addMessage message, atom.config.get('php-server.expandOnLog')
+      @view?.addMessage message, atom.config.get('php-bs-server.expandOnLog')
 
     @server.on 'error', (err) =>
       console.error err
@@ -136,29 +133,25 @@ module.exports =
         else
           @view.addError err.message
 
-    # Start server
+    # Start php server
     @server.start =>
-      @view.setTitle "PHP Server: <a href=\"#{@server.href}\">#{@server.href}</a>", true
+        @view.setTitle "PHP Server started: <a href=\"#{@server.href}\">#{@server.href}</a>", atom.config.get('php-bs-server.expandOnLog')
+        @view.addMessage "Document root is #{@server.documentRoot}", atom.config.get('php-bs-server.expandOnLog')
+        @view.addMessage "Listening on #{@server.href}", atom.config.get('php-bs-server.expandOnLog')
 
-      @view.addMessage "Listening on #{@server.href}", atom.config.get('php-server.expandOnLog')
-      @view.addMessage "Document root is #{@server.documentRoot}", atom.config.get('php-server.expandOnLog')
-
-      href = @server.href
-      if basename
-        href += '/' + basename
-
-      # Launch browser
-      if atom.config.get('php-server.openInBrowser')
-        open href
-
+        # -- Start Browsersync server
+        @bsconfigfile = atom.project.getPaths()[0]+'/bs-config.js'
+        @bsserver = new PhpServerBS
+        @bsserver.setConfigFile(@bsconfigfile)
+        @bsserver.start =>
+            @view.setTitle "Browsersync Server started : <a href=\"#{@bsserver.href}\">#{@bsserver.href}</a>", atom.config.get('php-bs-server.expandOnLog')
+            @view.addMessage "Listening on #{@bsserver.href}", atom.config.get('php-bs-server.expandOnLog')
 
   stop: ->
     @server?.stop()
-
-    @view?.clear()
-    @view?.close()
-
+    @bsserver?.stop()
     @server = null
+    @bsserver = null
     @view = null
 
 
