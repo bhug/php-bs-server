@@ -1,25 +1,22 @@
 {
-  "name": "php-server",
-  "main": "./lib/php-server",
-  "version": "0.8.0",
-  "description": "Run a local PHP server from within Atom, displaying the log in a bottom panel",
+  "name": "php-bs-server",
+  "main": "./lib/php-bs-server",
+  "version": "1.0.0",
+  "description": "Run a local PHP server from within Atom, displaying the log in a bottom panel. Based on https://atom.io/packages/php-server.",
   "activationCommands": {
-    "atom-workspace": "php-server:start",
-    ".tree-view": [
-      "php-server:start-tree",
-      "php-server:start-tree-route"
-    ],
-    "atom-text-editor": "php-server:start-document"
+    "atom-workspace": "php-bs-server:start",
+    ".tree-view": "php-bs-server:start-tree"
   },
-  "repository": "https://github.com/leijou/php-server",
+  "repository": "https://github.com/bhug/php-bs-server",
   "license": "MIT",
   "engines": {
     "atom": ">0.50.0"
   },
   "dependencies": {
-    "portfinder": "latest",
-    "open": "latest",
     "atom-message-panel": "latest",
-    "atom-space-pen-views": "^2.0.3"
+    "atom-space-pen-views": "^2.0.3",
+    "browser-sync": "^2.26.3",
+    "open": "latest",
+    "portfinder": "latest"
   }
 }
