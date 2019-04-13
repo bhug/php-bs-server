@@ -138,7 +138,7 @@ module.exports =
     @server.start =>
         @view.setTitle "PHP Server started: <a href=\"#{@server.href}\">#{@server.href}</a>", atom.config.get('php-bs-server.expandOnLog')
         @view.addMessage "Document root is #{@server.documentRoot}", atom.config.get('php-bs-server.expandOnLog')
-        @view.addMessage "Listening on #{@server.href}", atom.config.get('php-bs-server.expandOnLog')
+        @view.addMessage "PHP Server listening on #{@server.href}", atom.config.get('php-bs-server.expandOnLog')
 
         # -- Start Browsersync server
         @bsconfigfile = atom.project.getPaths()[0]+'/bs-config.js'
@@ -146,7 +146,7 @@ module.exports =
         @bsserver.setConfigFile(@bsconfigfile)
         @bsserver.start =>
             @view.setTitle "Browsersync Server started : <a href=\"#{@bsserver.href}\">#{@bsserver.href}</a>", atom.config.get('php-bs-server.expandOnLog')
-            @view.addMessage "Listening on #{@bsserver.href}", atom.config.get('php-bs-server.expandOnLog')
+            @view.addMessage "Browsersync Server listening on #{@bsserver.href}", atom.config.get('php-bs-server.expandOnLog')
 
   stop: ->
     @server?.stop()
