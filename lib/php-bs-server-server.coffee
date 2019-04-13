@@ -108,7 +108,7 @@ module.exports =
 
     _filterMessageAndEmit: (message, level) ->
       # message = [Sat Apr 13 12:28:39 2019] 127.0.0.1:36036 [200]: /login
-      console.log '- ' + message.substring(0,48)
+      # console.log '- ' + message.substring(0,48)
 
       # Filter by HTTP status code
       @reg = /(\[\d\d\d\])/
