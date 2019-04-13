@@ -40,4 +40,6 @@ module.exports =
         @server.server.stop()
         @server.stop
         console.log 'Server stopped'
+        console.log 'Clearing view'
+        @clear()
         super

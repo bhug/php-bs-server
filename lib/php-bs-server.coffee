@@ -91,6 +91,7 @@ module.exports =
       @view.setServer(this)
 
     @view.attach()
+    @view.clear()
 
     # Collapse view if expandOnLog is set to none
     if atom.config.get('php-bs-server.expandOnLog') == 'none'
@@ -153,7 +154,6 @@ module.exports =
     @server = null
     @bsserver = null
     @view = null
-
 
   clear: ->
     @view?.clear()
