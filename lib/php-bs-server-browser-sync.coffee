@@ -32,6 +32,7 @@ module.exports =
             try
 
                 @browserSyncServer = require("browser-sync").create() ;
+
                 @config = Object.assign(@defaultConfig, require(@configFile))
 
                 console.log "[php-bs-server:INFO] Starting Browsersync server (proxying #{@config.proxy})"
@@ -55,3 +56,6 @@ module.exports =
 
         destroy: ->
             @stop()
+
+        setConfigFile: (configFile) ->
+            @configFile = configFile
