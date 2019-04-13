@@ -14,11 +14,13 @@ module.exports =
         # Protected
         browserSyncServer: null
         defaultConfig: {
-            host:  'localhost'
-            port:  '8080'
-            ui:    false
-            notify:false
-            cwd:   atom.project.getPaths()[0]
+            host: 'localhost'
+            port: '8080'
+            open: 'local'
+            ui: false
+            notify: false
+            cwd: atom.project.getPaths()[0]
+            logLevel: 'silent'
         }
 
         constructor: (proxy) ->
@@ -29,29 +31,27 @@ module.exports =
 
             try
 
-                @browserSyncServer = require("browser-sync").create();
-
+                @browserSyncServer = require("browser-sync").create() ;
                 @config = Object.assign(@defaultConfig, require(@configFile))
-                console.debug "Config file : #{@configFile}", @config
 
+                console.log "[php-bs-server:INFO] Starting Browsersync server (proxying #{@config.proxy})"
+                console.debug "[php-bs-server:DEBUG] Config file : #{@configFile}", @config
                 @browserSyncServer.init(@config, =>
                     @serverPort = @browserSyncServer.getOption('port')
                     @href = "http://#{@config.host}:#{@serverPort}"
-                    console.log "Browsersync server started", @browserSyncServer
-                    callback?()
-                );
+                    console.log "[php-bs-server:INFO] Browsersync server started on http://#{@config.host}:#{@serverPort}"
+                    console.debug "[php-bs-server:DEBUG] Browsersync server : ", @browserSyncServer
+                    callback? ()
+                ) ;
 
             catch err
                 console.error err
 
         stop: (callback) ->
             if @browserSyncServer
-                @browserSyncServer.exit();
+                @browserSyncServer.exit() ;
                 @browserSyncServer = null;
-            callback?()
+            callback? ()
 
         destroy: ->
             @stop()
-
-        setConfigFile: (configFile) ->
-            @configFile = configFile
