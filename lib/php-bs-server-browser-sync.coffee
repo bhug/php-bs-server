@@ -14,14 +14,15 @@ module.exports =
         # Protected
         browserSyncServer: null
         defaultConfig: {
-            proxy: 'http://localhost:8000'
             host:  'localhost'
             port:  '8080'
             ui:    false
+            notify:false
             cwd:   atom.project.getPaths()[0]
         }
 
-        constructor: () ->
+        constructor: (proxy) ->
+            @defaultConfig.proxy = proxy
 
         start: (callback) ->
             @stop()

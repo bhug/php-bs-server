@@ -15,6 +15,7 @@ module.exports =
     documentRoot: null
     routerFile: null
     href: null
+    port: null
 
     # Protected
     server: null
@@ -80,6 +81,7 @@ module.exports =
 
           # Record server state
           @href = "http://#{@host}:#{port}"
+          @port = port
 
           # Once process has spawned execute callback
           callback?()

@@ -142,7 +142,7 @@ module.exports =
 
         # -- Start Browsersync server
         @bsconfigfile = atom.project.getPaths()[0]+'/bs-config.js'
-        @bsserver = new PhpServerBS
+        @bsserver = new PhpServerBS(@server.href)
         @bsserver.setConfigFile(@bsconfigfile)
         @bsserver.start =>
             @view.setTitle "Browsersync Server started : <a href=\"#{@bsserver.href}\">#{@bsserver.href}</a>", atom.config.get('php-bs-server.expandOnLog')
